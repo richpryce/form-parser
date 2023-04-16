@@ -44,7 +44,7 @@ jobs:
 
     - name: Deploy the S3 bucket
       run: |
-        aws cloudformation deploy --template-file infra/bucket-template.yaml --stack-name form-parser-stack --region ${AWS_REGION}
+        aws cloudformation deploy --template-file infra/bucket-template.yaml --stack-name form-parser-stack --region ${{ env.AWS_REGION }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

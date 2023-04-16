@@ -60,6 +60,6 @@ Resources:
     Type: AWS::Lambda::Permission
     Properties:
       Action: "lambda:InvokeFunction"
-      FunctionName: !Ref MyLambdaFunction
+      FunctionName: !GetAtt MyLambdaFunction.Arn
       Principal: "s3.amazonaws.com"
-      SourceArn: !Sub arn:aws:s3:::${MyBucket}
+      SourceArn: !GetAtt MyBucket.Arn

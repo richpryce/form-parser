@@ -12,6 +12,10 @@ Resources:
         IgnorePublicAcls: true
         BlockPublicPolicy: true
         RestrictPublicBuckets: true
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt MyLambdaFunction.Arn
 
   MyLambdaFunction:
     Type: AWS::Lambda::Function
@@ -52,34 +56,10 @@ Resources:
                   - s3:GetObject
                 Resource: !Sub arn:aws:s3:::${MyBucket}/*
 
-  MyBucketNotification:
-    Type: AWS::S3::BucketNotificationConfiguration
-    Properties:
-      Bucket: !Ref MyBucket
-      NotificationConfiguration:
-        LambdaConfigurations:
-          - Event: s3:ObjectCreated:*
-            Function: !GetAtt MyLambdaFunction.Arn
-
-  MyBucketPolicy:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket: !Ref MyBucket
-      PolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action:
-              - s3:GetObject
-            Resource: !Sub arn:aws:s3:::${MyBucket}/*
-
-  LambdaInvokePermission:
+  BucketPermission:
     Type: AWS::Lambda::Permission
     Properties:
-      Action: lambda:InvokeFunction
-      FunctionName: !GetAtt MyLambdaFunction.Arn
-      Principal: s3.amazonaws.com
-      SourceAccount: !Ref AWS::AccountId
-      SourceArn: !GetAtt MyBucket.Arn
+      Action: "lambda:InvokeFunction"
+      FunctionName: !Ref MyLambdaFunction
+      Principal: "s3.amazonaws.com"
+      SourceArn: !Sub arn:aws:s3:::${MyBucket}

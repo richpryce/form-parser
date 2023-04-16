@@ -12,10 +12,6 @@ Resources:
         IgnorePublicAcls: true
         BlockPublicPolicy: true
         RestrictPublicBuckets: true
-      NotificationConfiguration:
-        LambdaConfigurations:
-          - Event: s3:ObjectCreated:*
-            Function: !GetAtt MyLambdaFunction.Arn
 
   MyLambdaFunction:
     Type: AWS::Lambda::Function
@@ -54,12 +50,43 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:GetObject
-                Resource: !Sub arn:aws:s3:::${MyBucket}/*
+                Resource: !Sub 'arn:aws:s3:::${MyBucket}/*'
 
   BucketPermission:
     Type: AWS::Lambda::Permission
     Properties:
-      Action: "lambda:InvokeFunction"
       FunctionName: !GetAtt MyLambdaFunction.Arn
-      Principal: "s3.amazonaws.com"
-      SourceArn: !GetAtt MyBucket.Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: s3.amazonaws.com
+      SourceArn: !Sub 'arn:aws:s3:::${MyBucket}'
+
+  BucketNotificationFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs14.x
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          def handler(event, context):
+              s3 = boto3.client('s3')
+              s3.put_bucket_notification_configuration(
+                  Bucket=event['ResourceProperties']['Bucket'],
+                  NotificationConfiguration={
+                      'LambdaFunctionConfigurations': [
+                          {
+                              'LambdaFunctionArn': event['ResourceProperties']['LambdaFunctionArn'],
+                              'Events': ['s3:ObjectCreated:*']
+                          }
+                      ]
+                  }
+              )
+              return {'PhysicalResourceId': 'BucketNotificationConfiguration'}
+
+  BucketNotificationConfiguration:
+    Type: Custom::S3BucketNotification
+    Properties:
+      ServiceToken: !GetAtt BucketNotificationFunction.Arn
+      Bucket: !Ref MyBucket
+      LambdaFunctionArn: !GetAtt MyLambdaFunction.Arn

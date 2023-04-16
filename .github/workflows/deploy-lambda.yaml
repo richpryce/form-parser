@@ -42,9 +42,16 @@ jobs:
         cd dist
         zip -r ../hello-world-lambda.zip *
 
+    - name: List directory contents
+      run: |
+        echo "Workspace contents:"
+        ls -la "${{ github.workspace }}"
+        echo "Infra directory contents:"
+        ls -la "${{ github.workspace }}/infra"
+
     - name: Deploy the S3 bucket
       run: |
-        aws cloudformation deploy --template-file infra/bucket-template.yaml --stack-name form-parser-stack --region ${{ env.AWS_REGION }}
+        aws cloudformation deploy --template-file ${{ github.workspace }}/infra/bucket-template.yaml --stack-name form-parser-stack --region ${{ env.AWS_REGION }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

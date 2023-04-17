@@ -67,8 +67,8 @@ Resources:
                   - s3:GetObject
                   - s3:ListBucket
                 Resource:
-                  - 'arn:aws:s3:::*'
-                  - 'arn:aws:s3:::*/*'
+                  - 'arn:aws:s3:::${MyBucket}'
+                  - 'arn:aws:s3:::${MyBucket}/*'
               - Effect: Allow
                 Action:
                   - s3:PutBucketNotificationConfiguration

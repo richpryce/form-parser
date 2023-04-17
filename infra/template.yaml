@@ -68,21 +68,22 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       Code:
         ZipFile: |
-          import boto3
-          def handler(event, context):
-              s3 = boto3.client('s3')
-              s3.put_bucket_notification_configuration(
-                  Bucket=event['ResourceProperties']['Bucket'],
-                  NotificationConfiguration={
-                      'LambdaFunctionConfigurations': [
-                          {
-                              'LambdaFunctionArn': event['ResourceProperties']['LambdaFunctionArn'],
-                              'Events': ['s3:ObjectCreated:*']
-                          }
-                      ]
-                  }
-              )
-              return {'PhysicalResourceId': 'BucketNotificationConfiguration'}
+          const AWS = require('aws-sdk');
+          exports.handler = async (event, context) => {
+            const s3 = new AWS.S3();
+            await s3.putBucketNotificationConfiguration({
+              Bucket: event.ResourceProperties.Bucket,
+              NotificationConfiguration: {
+                LambdaFunctionConfigurations: [
+                  {
+                    LambdaFunctionArn: event.ResourceProperties.LambdaFunctionArn,
+                    Events: ['s3:ObjectCreated:*'],
+                  },
+                ],
+              },
+            }).promise();
+            return { PhysicalResourceId: 'BucketNotificationConfiguration' };
+          };
 
   BucketNotificationConfiguration:
     Type: Custom::S3BucketNotification

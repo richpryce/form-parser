@@ -50,6 +50,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:GetObject
+                  - s3:PutBucketNotificationConfiguration
                 Resource: !Sub 'arn:aws:s3:::${MyBucket}/*'
 
   BucketPermission:

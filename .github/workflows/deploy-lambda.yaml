@@ -23,7 +23,7 @@ jobs:
 
     - name: Build Lambda Function
       run: |
-        npm i
+        npm ci
         npm run build
         zip -r hello-world-lambda.zip dist node_modules -x "node_modules/.bin/*"
         aws s3 cp hello-world-lambda.zip s3://my-lambda-deploy-bucket-33732

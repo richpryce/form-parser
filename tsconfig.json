@@ -4,6 +4,7 @@
       "target": "ES2018",
       "moduleResolution": "node",
       "sourceMap": true,
+      "skipLibCheck": true,
       "outDir": "./dist",
       "esModuleInterop": true,
       "lib": ["ES2018", "dom"],

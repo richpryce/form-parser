@@ -6,3 +6,5 @@ export const handler = async (event: any = {}): Promise<any> => {
     };
     return response;
   };
+
+module.exports.handler = handler;

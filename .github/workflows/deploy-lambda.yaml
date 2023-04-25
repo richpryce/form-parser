@@ -17,7 +17,7 @@ jobs:
         run: |
           aws cloudformation deploy \
             --stack-name my-role-stack \
-            --template-file my-role-stack.yaml \
+            --template-file infra/role-template.yaml \
             --parameter-overrides MyBucket=my-bucket \
             --capabilities CAPABILITY_IAM
       - name: Build

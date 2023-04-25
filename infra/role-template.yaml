@@ -20,4 +20,4 @@ Resources:
                   - "s3:ListBucket"
                 Resource:
                   - !Join ['', ['arn:aws:s3:::', !Ref MyBucket]]
-                  - !Join ['', ['arn:aws:s3:::', !Ref MyBucket, '/*']]]
+                  - !Join ['', ['arn:aws:s3:::', !Ref MyBucket, '/*']]

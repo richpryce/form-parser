@@ -27,7 +27,7 @@ jobs:
         npm run build
         zip -r hello-world-lambda.zip dist node_modules
         echo "Finished zipping"
-        aws s3 cp hello-world-lambda.zip s3://my-lambda-deploy-bucket-33732 --debug
+        aws s3 cp hello-world-lambda.zip s3://my-lambda-deploy-bucket-33732 --region eu-west-2 --debug
 
     - name: Deploy CloudFormation Stack
       run: |

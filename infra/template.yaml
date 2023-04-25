@@ -2,28 +2,19 @@ Resources:
   MyBucket:
     Type: "AWS::S3::Bucket"
     Properties:
-      BucketName: my-bucket
+      BucketName: my-bucket-33732
 
   MyFunction:
     Type: "AWS::Lambda::Function"
     Properties:
       Code:
-        S3Bucket: my-lambda-deploy-bucket
-        S3Key: hello-world.zip
+        S3Bucket: my-lambda-deploy-bucket-33732
+        S3Key: hello-world-lambda.zip
       FunctionName: my-lambda-function
       Handler: index.handler
       Role: !GetAtt MyRole.Arn
       Runtime: nodejs14.x
       Timeout: 30
-
-  MyBucketNotification:
-    Type: "AWS::S3::BucketPolicy"
-    Properties:
-      Bucket: !Ref MyBucket
-      NotificationConfiguration:
-        LambdaConfigurations:
-          - Event: "s3:ObjectCreated:*"
-            Function: !GetAtt MyFunction.Arn
 
   MyRole:
     Type: "AWS::IAM::Role"
@@ -44,27 +35,18 @@ Resources:
                 Action:
                   - "s3:GetObject"
                   - "s3:ListBucket"
-                Resource: !Join ['', ['arn:aws:s3:::', !Ref MyBucket, '/*']]
+                Resource: !Sub 'arn:aws:s3:::${MyBucket}/*'
               - Effect: Allow
                 Action:
                   - "logs:CreateLogGroup"
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource: "*"
-Metadata:
-  AWS::CloudFormation::Interface:
-    ParameterGroups:
-      - Label:
-          default: "S3 Bucket Configuration"
-        Parameters:
-          - MyBucket
-      - Label:
-          default: "Lambda Function Configuration"
-        Parameters:
-          - MyFunction
-    ParameterLabels:
-      MyBucket:
-        default: "S3 Bucket Name"
-      MyFunction:
-        default: "Lambda Function to Trigger on S3 Events"
 
+  LambdaS3InvokePermission:
+    Type: "AWS::Lambda::Permission"
+    Properties:
+      FunctionName: !GetAtt MyFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "s3.amazonaws.com"
+      SourceArn: !Sub "arn:aws:s3:::${MyBucket}"

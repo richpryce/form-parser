@@ -13,6 +13,13 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y awscli
+      - name:
+        run: |
+          aws cloudformation deploy \
+            --stack-name my-role-stack \
+            --template-file my-role-stack.yaml \
+            --parameter-overrides MyBucket=my-bucket \
+            --capabilities CAPABILITY_IAM
       - name: Build
         run: |
           npm run build
@@ -25,7 +32,7 @@ jobs:
       - name: Update CloudFormation stack
         run: |
           aws cloudformation update-stack \
-            --stack-name my-stack \
-            --template-file my-template.yaml \
-            --parameters ParameterKey=S3BucketName,ParameterValue=my-bucket \
+            --stack-name my-lambda-stack \
+            --template-file infra/template.yaml \
+            --parameter-overrides MyBucket=form-bucket \
             --capabilities CAPABILITY_IAM

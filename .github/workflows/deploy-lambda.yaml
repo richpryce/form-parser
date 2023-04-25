@@ -38,6 +38,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: |
         aws cloudformation deploy \
+          --region eu-west-1 \
           --debug \
           --stack-name my-lambda-stack \
           --template-file infra/template.yaml \

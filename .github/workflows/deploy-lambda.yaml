@@ -26,10 +26,12 @@ jobs:
         npm i
         npm run build
         zip -r hello-world-lambda.zip dist node_modules
+        aws s3 cp hello-world-lambda.zip s3://my-lambda-deploy-bucket-33732
 
     - name: Deploy CloudFormation Stack
       run: |
         aws cloudformation deploy \
+          --debug \
           --stack-name my-lambda-stack \
           --template-file infra/template.yaml \
           --parameter-overrides MyBucket=my-bucket MyLambdaDeployBucket=my-lambda-deploy-bucket \

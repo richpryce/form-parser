@@ -20,7 +20,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y awscli
-
+    - name: Test frontend
+      run: cd frontend/ && npm run test
     - name: Build Lambda Function
       run: |
         npm i

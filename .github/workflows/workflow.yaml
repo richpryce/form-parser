@@ -5,6 +5,12 @@ on:
       - main
 
 jobs:
+  test_runner:
+    runs-on: self-hosted
+    steps:
+      - name: Test
+        run: |
+          echo "Testing"
   deploy:
     runs-on: ubuntu-latest
 
